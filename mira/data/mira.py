@@ -81,6 +81,7 @@ class Mira(Dataset):
         full_video_fp = rel_video_fp
         if self.root:
             full_video_fp = os.path.join(self.root, rel_video_fp)
+        full_video_fp = sample['path']
         return full_video_fp, rel_video_fp
 
     def _get_webvid_video_path(self, sample):
@@ -98,7 +99,7 @@ class Mira(Dataset):
                     video_path, rel_fp = self._get_video_path(sample)
                     caption = sample['short_caption'] 
 
-                else index % len(self) < 2 * len(self.metadata):
+                elif index % len(self) < 2 * len(self.metadata):
                     index = index % len(self) - len(self.metadata)
                     sample = self.metadata.iloc[index]
                     video_path, rel_fp = self._get_video_path(sample)
