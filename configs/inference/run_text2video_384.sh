@@ -1,5 +1,5 @@
 
-ckpt=checkpoints/384-v0.pt
+ckpt=/root/.cache/huggingface/hub/models--TencentARC--Mira-v0/snapshots/93c79a246c929e84e3a1dd9b044aa9cda880c337/384-v0.pt
 
 
 

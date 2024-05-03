@@ -33,6 +33,9 @@ cd mira/scripts
 mkdir -p $save_root/$name
 
 
+export http_proxy=http://localhost:8118
+export https_proxy=http://localhost:8118
+
 torchrun --nproc_per_node=$HOST_GPU_NUM --nnodes=$HOST_NUM --master_addr=$CHIEF_IP --master_port=14073 --node_rank=$INDEX \
 trainer.py \
 --base $config_file \
