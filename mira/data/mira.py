@@ -81,6 +81,7 @@ class Mira(Dataset):
         full_video_fp = rel_video_fp
         if self.root:
             full_video_fp = os.path.join(self.root, rel_video_fp)
+        full_video_fp = sample['path']
         return full_video_fp, rel_video_fp
 
     def _get_webvid_video_path(self, sample):
