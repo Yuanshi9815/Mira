@@ -27,14 +27,14 @@ HOST_GPU_NUM=1
 # args
 name="config_384_mira"
 config_file="configs/Mira/config_384_mira.yaml"
-save_root="../../Saved_Text2Video/formal-384/mira"
+save_root="/root/workspace/save_path/mira"
 
 cd mira/scripts
 mkdir -p $save_root/$name
 
 
-export http_proxy=http://localhost:8118
-export https_proxy=http://localhost:8118
+# export http_proxy=http://localhost:8118
+# export https_proxy=http://localhost:8118
 
 torchrun --nproc_per_node=$HOST_GPU_NUM --nnodes=$HOST_NUM --master_addr=$CHIEF_IP --master_port=14073 --node_rank=$INDEX \
 trainer.py \
