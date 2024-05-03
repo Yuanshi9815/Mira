@@ -98,7 +98,7 @@ class Mira(Dataset):
                     video_path, rel_fp = self._get_video_path(sample)
                     caption = sample['short_caption'] 
 
-                else index % len(self) < 2 * len(self.metadata):
+                elif index % len(self) < 2 * len(self.metadata):
                     index = index % len(self) - len(self.metadata)
                     sample = self.metadata.iloc[index]
                     video_path, rel_fp = self._get_video_path(sample)
