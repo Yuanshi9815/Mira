@@ -1070,6 +1070,12 @@ class MiraDiT(ModelMixin, ConfigMixin):
 
     def get_1d_sincos_temp_embed(self, embed_dim, length):
         pos = torch.arange(0, length).unsqueeze(1)
+        print(pos.shape)
+        assert length % 60 == 0
+        pos = torch.cat(
+            [torch.arange(0, 60).unsqueeze(1) for _ in range(length // 60)], dim=0
+        )
+        print(pos.shape)
         return get_1d_sincos_pos_embed_from_grid(embed_dim, pos)
 
     @classmethod

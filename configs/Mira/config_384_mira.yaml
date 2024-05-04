@@ -2,7 +2,7 @@ model:
   train_temporal: true
   base_learning_rate: 1.0e-5
   scale_lr: false
-  target: mira.models.ddpm3d.MiraDDPM
+  target: mira.models.ddpm_mamba.MiraMamba
   pretrained_checkpoint:  /root/.cache/huggingface/hub/models--TencentARC--Mira-v0/snapshots/93c79a246c929e84e3a1dd9b044aa9cda880c337/384-v0.pt # path to pretrain checkpoint
   params:
     linear_start: 0.00085
@@ -41,7 +41,7 @@ model:
     denoiser_config:
       target: mira.modules.networks.miradit.MiraDiT
       params:
-        temporal_length:  60
+        temporal_length:  180
         activation_fn: "gelu-approximate"
         attention_bias: true
         attention_head_dim: 72
@@ -122,7 +122,7 @@ data:
       params:
         meta_path:  /root/workspace/VideoData/local_miradata.csv
         # dense_meta: # path to dense miradata metadata        
-        video_length: 60
+        video_length: 180
         frame_stride: 4
         load_raw_resolution: True
         resolution: [240,384]
