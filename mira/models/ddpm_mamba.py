@@ -91,7 +91,7 @@ class MiraMamba(MiraDDPM):
 
     def get_attn_newforward(self, module, module_idx):
         def new_forward(x, encoder_hidden_states=None, attention_mask=None):
-            print(f'x shape: {x.shape}, module_idx: {module_idx}')
+            # print(f'x shape: {x.shape}, module_idx: {module_idx}')
             context, mask = encoder_hidden_states, attention_mask
             temporal_n = x.shape[1]
             mamba_module = self.mamba_plugin.mamba_list[module_idx]
@@ -99,8 +99,11 @@ class MiraMamba(MiraDDPM):
             assert not temporal_n % 60
             q = module.to_q(x)
             
-            context = mamba_module(x) if context is None else context
-            context = x if context is None else context
+
+            forward_context = mamba_module(x)
+            backward_context = mamba_module(x.flip(1))
+            context = x + forward_context + backward_context
+            # context = x if context is None else context
 
 
             k, v = module.to_k(context), module.to_v(context)
