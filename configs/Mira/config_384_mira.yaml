@@ -1,6 +1,6 @@
 model:
   train_temporal: true
-  base_learning_rate: 1.0e-5
+  base_learning_rate: 1.0e-4
   scale_lr: false
   target: mira.models.ddpm_mamba.MiraMamba
   pretrained_checkpoint:  /root/.cache/huggingface/hub/models--TencentARC--Mira-v0/snapshots/93c79a246c929e84e3a1dd9b044aa9cda880c337/384-v0.pt # path to pretrain checkpoint

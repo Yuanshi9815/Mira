@@ -951,8 +951,8 @@ class MiraDiT(ModelMixin, ConfigMixin):
 
                 if enable_temporal_attentions:
                     hidden_states = rearrange(hidden_states, '(b f) t d -> (b t) f d', b=input_batch_size).contiguous()
-                    if i == 0:
-                        hidden_states = hidden_states + self.temp_pos_embed
+                    # if i == 0:
+                    #     hidden_states = hidden_states + self.temp_pos_embed
                     if self.window_attn:
                         wh, ww = self.window_attn
                         hidden_states = rearrange(hidden_states, '(b h w) f d -> (b f) d h w', h=height,

@@ -91,10 +91,11 @@ class MiraMamba(MiraDDPM):
 
     def get_attn_newforward(self, module, module_idx):
         def new_forward(x, encoder_hidden_states=None, attention_mask=None):
-            # print(f'x shape: {x.shape}, module_idx: {module_idx}')
             context, mask = encoder_hidden_states, attention_mask
             temporal_n = x.shape[1]
             mamba_module = self.mamba_plugin.mamba_list[module_idx]
+
+            # return mamba_module(x) + mamba_module(x.flip(1))
 
             assert not temporal_n % 60
             q = module.to_q(x)
@@ -102,7 +103,8 @@ class MiraMamba(MiraDDPM):
 
             forward_context = mamba_module(x)
             backward_context = mamba_module(x.flip(1))
-            context = x + forward_context + backward_context
+            # context = x + forward_context + backward_context
+            context = forward_context + backward_context
             # context = x if context is None else context
 
 
@@ -154,8 +156,11 @@ class MiraMamba(MiraDDPM):
         """ configure_optimizers for LatentDiffusion """
         lr = self.learning_rate
 
-        params = list(self.model.parameters()) + list(self.mamba_plugin.parameters())
-        mainlogger.info(f"@Training [{len(params)}] Full Paramters.")
+        # params = list(self.model.parameters()) + list(self.mamba_plugin.parameters())
+        # mainlogger.info(f"@Training [{len(params)}] Full Paramters.")
+
+        params = list(self.mamba_plugin.parameters())
+        mainlogger.info(f"@Training [{len(params)}] Mamva Paramters.")
 
         if self.learn_logvar:
             mainlogger.info('Diffusion model optimizing logvar')
