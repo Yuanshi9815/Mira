@@ -951,8 +951,8 @@ class MiraDiT(ModelMixin, ConfigMixin):
 
                 if enable_temporal_attentions:
                     hidden_states = rearrange(hidden_states, '(b f) t d -> (b t) f d', b=input_batch_size).contiguous()
-                    # if i == 0:
-                    #     hidden_states = hidden_states + self.temp_pos_embed
+                    if i == 0:
+                        hidden_states = hidden_states + self.temp_pos_embed
                     if self.window_attn:
                         wh, ww = self.window_attn
                         hidden_states = rearrange(hidden_states, '(b h w) f d -> (b f) d h w', h=height,
@@ -1070,12 +1070,14 @@ class MiraDiT(ModelMixin, ConfigMixin):
 
     def get_1d_sincos_temp_embed(self, embed_dim, length):
         pos = torch.arange(0, length).unsqueeze(1)
-        print(pos.shape)
-        assert length % 60 == 0
-        pos = torch.cat(
-            [torch.arange(0, 60).unsqueeze(1) for _ in range(length // 60)], dim=0
-        )
-        print(pos.shape)
+        random_off_set = torch.randint(0, 1000, (1,)).item()
+        pos = torch.arange(random_off_set, random_off_set+length).unsqueeze(1)
+        # print(pos.shape)
+        # assert length % 60 == 0
+        # pos = torch.cat(
+        #     [torch.arange(0, 60).unsqueeze(1) for _ in range(length // 60)], dim=0
+        # )
+        # print(pos.shape)
         return get_1d_sincos_pos_embed_from_grid(embed_dim, pos)
 
     @classmethod

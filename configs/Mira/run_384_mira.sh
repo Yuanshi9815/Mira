@@ -27,7 +27,8 @@ HOST_GPU_NUM=1
 # args
 name="config_384_mira"
 config_file="configs/Mira/config_384_mira.yaml"
-save_root="/root/workspace/save_path/mira_only_mamba"
+# save_root="/root/workspace/save_path/mira_only_mamba"
+save_root="/root/workspace/save_path/mira_mamba_former_random_pos"
 
 cd mira/scripts
 mkdir -p $save_root/$name
