@@ -100,11 +100,12 @@ class MiraMamba(MiraDDPM):
             assert not temporal_n % 60
             q = module.to_q(x)
             
+            mode = 'slide_window'
 
             forward_context = mamba_module(x)
             backward_context = mamba_module(x.flip(1))
-            # context = x + forward_context + backward_context
-            context = forward_context + backward_context
+            context = x + forward_context + backward_context
+            # context = forward_context + backward_context
             # context = x if context is None else context
 
 
@@ -115,16 +116,39 @@ class MiraMamba(MiraDDPM):
                 (q, k, v),
             )
 
-            # 
-            out = []
-            for i in range(0, temporal_n, 60):
-                out.append(
-                    torch.nn.functional.scaled_dot_product_attention(
-                        q[:, i:i+60], k[:, i:i+60], v[:, i:i+60],
-                        attn_mask=None, dropout_p=0.0, is_causal=False
+            # independtly
+            if mode == "independtly":
+                out = []
+                for i in range(0, temporal_n, 60):
+                    out.append(
+                        torch.nn.functional.scaled_dot_product_attention(
+                            q[:, i:i+60], k[:, i:i+60], v[:, i:i+60],
+                            attn_mask=None, dropout_p=0.0, is_causal=False
+                        )
                     )
-                )
-            out = torch.cat(out, dim=1)
+                out = torch.cat(out, dim=1)
+            elif mode == "slide_window":
+                #  padding k and v to the head and tail
+                padding = torch.zeros_like(q[:,:30])
+                q = torch.cat([padding, q, padding], 1)
+                v = torch.cat([padding, v, padding], 1)
+
+                # 生成一个mask
+                mask = torch.ones(60, 120).to(q.device)
+                for i in range(60):
+                    mask[i, : i] = 0
+                    mask[i, 60 - i:] = 0
+                
+                out = []
+                for i in range(0, temporal_n, 60):
+                    out.append(
+                        torch.nn.functional.scaled_dot_product_attention(
+                            q[:, i:i+60], k[:, i:i+120], v[:, i:i+120],
+                            attn_mask=mask, dropout_p=0.0, is_causal=False
+                        )
+                    )
+                out = torch.cat(out, dim=1)
+
 
             out = (
                 out.unsqueeze(0).reshape(b, module.heads, out.shape[1], -1).permute(0, 2, 1, 3)
@@ -156,11 +180,11 @@ class MiraMamba(MiraDDPM):
         """ configure_optimizers for LatentDiffusion """
         lr = self.learning_rate
 
-        # params = list(self.model.parameters()) + list(self.mamba_plugin.parameters())
-        # mainlogger.info(f"@Training [{len(params)}] Full Paramters.")
+        params = list(self.model.parameters()) + list(self.mamba_plugin.parameters())
+        mainlogger.info(f"@Training [{len(params)}] Full Paramters.")
 
-        params = list(self.mamba_plugin.parameters())
-        mainlogger.info(f"@Training [{len(params)}] Mamva Paramters.")
+        # params = list(self.mamba_plugin.parameters())
+        # mainlogger.info(f"@Training [{len(params)}] Mamva Paramters.")
 
         if self.learn_logvar:
             mainlogger.info('Diffusion model optimizing logvar')

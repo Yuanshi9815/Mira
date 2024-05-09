@@ -1070,7 +1070,8 @@ class MiraDiT(ModelMixin, ConfigMixin):
 
     def get_1d_sincos_temp_embed(self, embed_dim, length):
         pos = torch.arange(0, length).unsqueeze(1)
-        random_off_set = torch.randint(0, 1000, (1,)).item()
+        # random_off_set = torch.randint(0, 1000, (1,)).item()
+        random_off_set = 0
         pos = torch.arange(random_off_set, random_off_set+length).unsqueeze(1)
         # print(pos.shape)
         # assert length % 60 == 0
