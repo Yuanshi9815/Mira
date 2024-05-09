@@ -130,14 +130,14 @@ class MiraMamba(MiraDDPM):
             elif mode == "slide_window":
                 #  padding k and v to the head and tail
                 padding = torch.zeros_like(q[:,:30])
-                q = torch.cat([padding, q, padding], 1)
+                k = torch.cat([padding, k, padding], 1)
                 v = torch.cat([padding, v, padding], 1)
 
                 # 生成一个mask
                 mask = torch.ones(60, 120).to(q.device)
                 for i in range(60):
                     mask[i, : i] = 0
-                    mask[i, 60 - i:] = 0
+                    mask[i, 60 + i:] = 0
                 
                 out = []
                 for i in range(0, temporal_n, 60):

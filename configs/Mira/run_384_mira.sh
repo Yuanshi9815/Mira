@@ -28,7 +28,7 @@ HOST_GPU_NUM=1
 name="config_384_mira"
 config_file="configs/Mira/config_384_mira.yaml"
 # save_root="/root/workspace/save_path/mira_only_mamba"
-save_root="/root/workspace/save_path/slide_window"
+save_root="/root/workspace/save_path/slide_window_bugfixed"
 
 cd mira/scripts
 mkdir -p $save_root/$name
